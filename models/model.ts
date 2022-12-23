@@ -13,6 +13,7 @@ export interface cartType {
 export interface contextType {
 	cart: cartType[] | [];
 	addToCart: (id: number) => void;
+	removeFromCart: (id: number) => void;
 }
 
 export interface propsType {

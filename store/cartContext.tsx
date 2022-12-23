@@ -4,6 +4,7 @@ import { cartType, contextType, propsType, CartUpdate } from "../models/model";
 export const CartContext = createContext<contextType | null>({
 	cart: [],
 	addToCart: (id: number) => {},
+	removeFromCart: (id: number) => {},
 });
 
 export const CartContextProvider = (props: propsType) => {
@@ -62,6 +63,7 @@ export const CartContextProvider = (props: propsType) => {
 			value={{
 				cart,
 				addToCart,
+				removeFromCart,
 			}}>
 			{children}
 		</CartContext.Provider>

@@ -12,6 +12,9 @@ const Product: React.FC<ProductModel> = (props) => {
 	const addToCartHandler = () => {
 		cartCtx?.addToCart(id);
 	};
+	const removeFromCartHandler = () => {
+		cartCtx?.removeFromCart(id);
+	};
 	return (
 		<div className="w-64 border bottom-2 rounded-md shadow-md p-8 flex flex-col justify-between">
 			<Image
@@ -44,7 +47,7 @@ const Product: React.FC<ProductModel> = (props) => {
 						</button>
 						<button
 							className="p-2 bg-purple-300 hover:bg-purple-400 font-medium rounded-md"
-							onClick={addToCartHandler}>
+							onClick={removeFromCartHandler}>
 							-
 						</button>
 					</div>
