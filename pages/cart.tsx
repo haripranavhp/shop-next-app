@@ -19,7 +19,6 @@ const Cart: React.FC = () => {
 		const cartDetails = await Promise.all<Promise<any>[] | any>(
 			cartItemsPromises
 		);
-		console.log(cartDetails);
 
 		setCartItems(cartDetails);
 	};
