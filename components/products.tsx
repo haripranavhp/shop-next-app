@@ -1,24 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Product from "./product";
 import { ProductModel } from "../models/model";
-import { getAllProducts } from "../service/api";
 
-const Products: React.FC = () => {
-	const [products, setProducts] = useState<ProductModel[]>([]);
+const Products: React.FC<{ products: ProductModel[] }> = (props) => {
+	const { products } = props;
 	const [input, setInput] = useState<string>("");
-
-	const getProducts = async () => {
-		try {
-			const allProducts = await getAllProducts();
-			setProducts(allProducts);
-		} catch (e: any) {
-			console.error(e.message);
-		}
-	};
-
-	useEffect(() => {
-		getProducts();
-	}, []);
 
 	const filteredProducts = useMemo(() => {
 		return products.filter((val) =>
@@ -53,4 +39,5 @@ const Products: React.FC = () => {
 		</section>
 	);
 };
+
 export default Products;

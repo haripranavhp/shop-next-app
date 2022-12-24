@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { formatter } from "../utils/helper";
 import { ProductModel } from "../models/model";
 import { CartContext } from "../store/cartContext";
@@ -56,4 +56,4 @@ const Product: React.FC<ProductModel> = (props) => {
 		</div>
 	);
 };
-export default Product;
+export default React.memo(Product);

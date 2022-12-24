@@ -1,7 +1,7 @@
 import React, { createContext, useState } from "react";
-import { cartType, contextType, propsType, CartUpdate } from "../models/model";
+import { cartType, contextType, propsType, CartAction } from "../models/model";
 
-export const CartContext = createContext<contextType | null>({
+export const CartContext = createContext<contextType>({
 	cart: [],
 	addToCart: (id: number) => {},
 	removeFromCart: (id: number) => {},
@@ -12,14 +12,14 @@ export const CartContextProvider = (props: propsType) => {
 
 	const [cart, setCart] = useState<cartType[]>([]);
 
-	const updateItemInCart = (operation: CartUpdate, id: number) => {
+	const updateItemInCart = (operation: CartAction, id: number) => {
 		setCart((prevCartItems) => {
 			const items = [...prevCartItems];
 			const cartItemIndex = items.findIndex((item) => item.id === id);
 
-			if (operation === CartUpdate.ADD) {
+			if (operation === CartAction.ADD) {
 				items[cartItemIndex].quantity += 1;
-			} else if (operation === CartUpdate.REMOVE) {
+			} else if (operation === CartAction.REMOVE) {
 				items[cartItemIndex].quantity -= 1;
 			}
 			return items;
@@ -34,7 +34,7 @@ export const CartContextProvider = (props: propsType) => {
 				{ id: id, quantity: 1 },
 			]);
 		} else {
-			updateItemInCart(CartUpdate.ADD, id);
+			updateItemInCart(CartAction.ADD, id);
 		}
 	};
 
@@ -49,7 +49,7 @@ export const CartContextProvider = (props: propsType) => {
 				prevCartItems.filter((item) => item?.id !== id)
 			);
 		} else if (countOfItemInCart > 1) {
-			updateItemInCart(CartUpdate.REMOVE, id);
+			updateItemInCart(CartAction.REMOVE, id);
 		}
 	};
 

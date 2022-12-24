@@ -4,7 +4,9 @@ export interface ProductModel {
 	price: number;
 	image: string;
 }
-
+export interface CartModel extends ProductModel {
+	quantity: number;
+}
 export interface cartType {
 	id: number;
 	quantity: number;
@@ -20,7 +22,7 @@ export interface propsType {
 	children: JSX.Element | JSX.Element[];
 }
 
-export enum CartUpdate {
+export enum CartAction {
 	ADD,
 	REMOVE,
 }

@@ -1,57 +1,62 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import CartItem from "../components/cartItem";
-import { ProductModel } from "../models/model";
+import { CartAction, CartModel } from "../models/model";
 import { CartContext } from "../store/cartContext";
 import { formatter } from "../utils/helper";
 
 const Cart: React.FC = () => {
-	const cartCtx = useContext(CartContext);
+	const { cart, addToCart, removeFromCart } = useContext(CartContext);
 
-	const [cartItems, setCartItems] = useState<ProductModel[]>([]);
+	const [cartItems, setCartItems] = useState<CartModel[]>([]);
 
 	const getCartDetails = async () => {
-		const cartItemsIds = cartCtx?.cart.map((item) => item.id);
-		const cartItemsPromises = cartItemsIds?.map((id) =>
+		const cartItemsPromises = cart.map(({ id }) =>
 			fetch(`https://fakestoreapi.com/products/${id}`).then((res) =>
 				res.json()
 			)
 		);
-		if (cartItemsPromises) {
-			const cartDetails = await Promise.all<Promise<ProductModel>[]>(
-				cartItemsPromises
-			);
-			setCartItems(cartDetails);
-		}
-	};
 
+		const cartDetails = await Promise.all<Promise<CartModel>[]>(
+			cartItemsPromises
+		);
+		setCartItems(cartDetails);
+	};
+	const updateQuantityHandler = useCallback(
+		(id: number, action: CartAction) => {
+			if (action === CartAction.ADD) {
+				addToCart(id);
+			} else if (action === CartAction.REMOVE) {
+				removeFromCart(id);
+			}
+		},
+		[]
+	);
 	useEffect(() => {
 		getCartDetails();
 	}, []);
 
-	// let totalCost = 0;
-	// for (let i = 0; i < cartItems.length; i++) {
-	// 	totalCost = totalCost + cartItems[i].price * cartCtx!.cart[i].quantity;
-	// }
 	const totalCost = React.useMemo(() => {
 		let total = 0;
 		for (let i = 0; i < cartItems.length; i++) {
-			total += cartItems[i].price * cartCtx!.cart[i].quantity;
+			total += cartItems[i].price * cart[i].quantity;
 		}
 		return total;
-	}, [cartItems, cartCtx?.cart]);
+	}, [cartItems, cart]);
 
 	return cartItems.length === 0 ? (
 		<p className="text-center font-extrabold">Loading ...</p>
 	) : (
 		<section className="flex flex-col justify-around lg:flex-row">
 			<div className="flex flex-col gap-3 mt-4 ml-4">
-				{cartItems.map((item) => (
+				{cartItems.map((item, index) => (
 					<CartItem
 						key={item.id}
 						id={item.id}
 						title={item.title}
 						price={item.price}
 						image={item.image}
+						quantity={cart[index].quantity}
+						updateQuantity={updateQuantityHandler}
 					/>
 				))}
 			</div>
