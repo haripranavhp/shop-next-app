@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import { cartType } from "../models/model";
 import CartIcon from "../public/icons/Cart";
 import { CartContext } from "../store/cartContext";
@@ -7,11 +7,12 @@ import { CartContext } from "../store/cartContext";
 const Navbar: React.FC = () => {
 	const cartCtx = useContext(CartContext);
 
-	const cart: cartType[] | undefined = cartCtx?.cart;
-	const totalItems = cart?.reduce(
-		(acc: number, item: cartType) => acc + item.quantity,
-		0
-	);
+	const totalItems = useMemo(() => {
+		return cartCtx?.cart?.reduce(
+			(acc: number, item: cartType) => acc + item.quantity,
+			0
+		);
+	}, [cartCtx?.cart]);
 
 	return (
 		<nav className="h-16 bg-slate-300">

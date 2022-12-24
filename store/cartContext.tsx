@@ -13,28 +13,22 @@ export const CartContextProvider = (props: propsType) => {
 	const [cart, setCart] = useState<cartType[]>([]);
 
 	const updateItemInCart = (operation: CartUpdate, id: number) => {
-		const cartItemIndex = cart.findIndex((item) => item.id === id);
-		const countOfCartItem = cart[cartItemIndex]?.quantity;
-
 		setCart((prevCartItems) => {
 			const items = [...prevCartItems];
+			const cartItemIndex = items.findIndex((item) => item.id === id);
+
 			if (operation === CartUpdate.ADD) {
-				items[cartItemIndex].quantity = countOfCartItem + 1;
-			}
-			if (operation === CartUpdate.REMOVE) {
-				items[cartItemIndex].quantity = countOfCartItem - 1;
+				items[cartItemIndex].quantity += 1;
+			} else if (operation === CartUpdate.REMOVE) {
+				items[cartItemIndex].quantity -= 1;
 			}
 			return items;
 		});
 	};
 
 	const addToCart = (id: number) => {
-		let isItemNewToCart = true;
-
-		if (cart?.find((ele) => ele.id === id)) {
-			isItemNewToCart = false;
-		}
-		if (isItemNewToCart) {
+		const item = cart.find((ele) => ele.id === id);
+		if (!item) {
 			setCart((prevCartItems) => [
 				...prevCartItems,
 				{ id: id, quantity: 1 },
@@ -45,15 +39,16 @@ export const CartContextProvider = (props: propsType) => {
 	};
 
 	const removeFromCart = (id: number) => {
-		const item = cart?.find((item) => item.id === id);
-		const countOfItemInCart = item?.quantity;
+		const item = cart.find((item) => item.id === id);
+		if (!item) return;
+
+		const countOfItemInCart = item.quantity;
 
 		if (countOfItemInCart === 1) {
 			setCart((prevCartItems) =>
 				prevCartItems.filter((item) => item?.id !== id)
 			);
-		}
-		if (countOfItemInCart && countOfItemInCart > 1) {
+		} else if (countOfItemInCart > 1) {
 			updateItemInCart(CartUpdate.REMOVE, id);
 		}
 	};

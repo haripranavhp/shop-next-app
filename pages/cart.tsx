@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CartItem from "../components/cartItem";
 import { ProductModel } from "../models/model";
 import { CartContext } from "../store/cartContext";
@@ -12,25 +12,33 @@ const Cart: React.FC = () => {
 	const getCartDetails = async () => {
 		const cartItemsIds = cartCtx?.cart.map((item) => item.id);
 		const cartItemsPromises = cartItemsIds?.map((id) =>
-			fetch(`https://fakestoreapi.com/products/${id}`)
-				.then((res) => res.json())
-				.then((json) => json)
+			fetch(`https://fakestoreapi.com/products/${id}`).then((res) =>
+				res.json()
+			)
 		);
-		const cartDetails = await Promise.all<Promise<any>[] | any>(
-			cartItemsPromises
-		);
-
-		setCartItems(cartDetails);
+		if (cartItemsPromises) {
+			const cartDetails = await Promise.all<Promise<ProductModel>[]>(
+				cartItemsPromises
+			);
+			setCartItems(cartDetails);
+		}
 	};
 
 	useEffect(() => {
 		getCartDetails();
 	}, []);
 
-	let totalCost = 0;
-	for (let i = 0; i < cartItems.length; i++) {
-		totalCost = totalCost + cartItems[i].price * cartCtx!.cart[i].quantity;
-	}
+	// let totalCost = 0;
+	// for (let i = 0; i < cartItems.length; i++) {
+	// 	totalCost = totalCost + cartItems[i].price * cartCtx!.cart[i].quantity;
+	// }
+	const totalCost = React.useMemo(() => {
+		let total = 0;
+		for (let i = 0; i < cartItems.length; i++) {
+			total += cartItems[i].price * cartCtx!.cart[i].quantity;
+		}
+		return total;
+	}, [cartItems, cartCtx?.cart]);
 
 	return cartItems.length === 0 ? (
 		<p className="text-center font-extrabold">Loading ...</p>
